@@ -37,3 +37,4 @@ Missing features:
 with a configurable frequency
 1. Be able to add vertical timing marks in the graph
 1. Change top area with configuration settings into a pull-down menu.
+1. Have an adjustable rise time/fall time
