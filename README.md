@@ -4,7 +4,7 @@ It is written in Python, using the PySimpleGUI module.
 
 At the moment this is a very basic program but fully functional.
 
-![SiTiDiUI_ss.gif]
+![Screenshot](SiTiDiUI_ss.gif)
 
 ### Creating a timing diagram
 
