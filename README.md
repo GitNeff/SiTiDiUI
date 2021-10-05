@@ -6,9 +6,10 @@ At the moment this is a very basic program but fully functional.
 
 ![Screenshot](SiTiDiUI_ss.gif)
 
-Assuming Python is already installed, add this with a command
-such as "python -m install pip -U PySimpleGui". Other modules
-include pillow (PIL) and math.
+Assuming Python is already installed, PySimpleGUI can be added 
+with a command such as "python -m install pip -U PySimpleGui". 
+Other modules include pillow (PIL) and math. This can be converted
+into an exe as well.
 
 ### Creating a timing diagram
 
