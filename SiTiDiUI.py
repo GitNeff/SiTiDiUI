@@ -62,6 +62,9 @@ layout = [  [sg.Text('Horizontal Axis: Start Time'), sg.InputText('0',key='-MinT
              sg.Text('Number of Ticks'), sg.InputText('10',key='-NumTicks-',size=6),
              sg.Text('Units'), sg.InputText('Sec',key='-Units-',size=6),],
             [sg.Text('Number of lines'), sg.InputText('4',key='-NumLines-',size=6),
+             sg.Text('Clock line'), sg.Combo(["None","0","1","2","3","4","5"],
+                                             "None",key='-ClkLine-',enable_events=True),
+             sg.Text('Clock duration'), sg.InputText('10', key='-ClkDur-',size=5,enable_events=True),
              sg.Text('  '), sg.Button('Redraw X,Y Axis'),
              sg.Text('  '), sg.Button('Save Image'),
              sg.Text('  '), sg.Button('Exit'),],
@@ -92,6 +95,12 @@ while True:
                          int(values['-NumTicks-']), values['-Units-'], lines)
         for n in range(lines):
             td_can.draw_timing_line(canvas, n)
+    elif event == '-ClkLine-' or event == '-ClkDur-':
+        # print (values['-ClkDur-'])
+        if values['-ClkLine-'] != 'None' and values['-ClkDur-'] != '':
+            if int(values['-ClkDur-']) > 5:
+                td_can.draw_clock(canvas, int(values['-ClkLine-']),int(values['-ClkDur-']),
+                              int(values['-MinTime-']), int(values['-MaxTime-']))
     elif event == 'Save Image':
         save_canvas()
     elif event == "-canvas-": # mouse event in the graph
