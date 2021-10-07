@@ -38,8 +38,9 @@ Missing features:
 1. Save/read configuration file, format TBD
 1. Test "Save Image" feature on other systems
 1. Add a tristate option
-1. Add ability to create a sine wave or square wave for a timing line,
+1. Add ability to create a sine wave for a timing line,
 with a configurable frequency
 1. Be able to add vertical timing marks in the graph
 1. Change top area with configuration settings into a pull-down menu.
 1. Have an adjustable rise time/fall time
+1. Report the version number
