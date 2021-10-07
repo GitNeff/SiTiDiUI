@@ -14,7 +14,7 @@ import PySimpleGUI as sg
 import math
 
 # this part executes at import time... I think
-SIZE_X = 860
+SIZE_X = 840
 SIZE_Y = 400
 
 # canvas size is in pixels, but for drawing purposes, a minimal
@@ -22,7 +22,7 @@ SIZE_Y = 400
 # make that configurable too.
 # The horizontal lines making up the timing diagram are divided
 # into (SIZE_X - <margins>) / MIN_UNIT_SIZE modifiable pieces
-MIN_UNIT_SIZE = 5
+MIN_UNIT_SIZE = 5  # in pixels
 UNITS_PER_LINE = int((SIZE_X - 40)/MIN_UNIT_SIZE)
 
 # possible values for each unit of the lines
@@ -38,10 +38,10 @@ LOW_LINE_OFFSET = 40
 CENTER_OFFSET   = 20
 HIGH_LINE_OFFSET = 0
 
-CTE = 20           # CHART_TOP_EDGE 
-CLE = 40           # CHART_LEFT_EDGE
-CRE = SIZE_X - 10  # CHART_RIGHT_EDGE
-CBE = SIZE_Y - 10  # CHART_BOTTOM_EDGE
+CTE = 20        # CHART_TOP_EDGE 
+CLE = 40        # CHART_LEFT_EDGE
+CRE = SIZE_X    # CHART_RIGHT_EDGE
+CBE = SIZE_Y    # CHART_BOTTOM_EDGE
 
 XMARGINS = 40   # CHART_LEFT_EDGE + RIGHT_EDGE margin
 
@@ -67,6 +67,8 @@ def draw_axes(canvas, minTime, maxTime, numTicks, unitLabel, numLines):
     global activeLines
     global timingLine
 
+    print ("Units per line: " + str(UNITS_PER_LINE))
+    
     activeLines = numLines
     try:
         canvas.draw_line((0, CTE),   (SIZE_X, CTE))  # x axis line
@@ -174,7 +176,7 @@ def flip_stretch (canvas, n, unit):
 #  if on a timing line change the logic level
 #  if at the start of a timing line, maybe bring up a
 #  pop-up menu with options for the line: 
-#    color, set as sine wave or square wave?
+#    color, set low, high, sine wave or square wave?
 # -------------------------------------------
 def handle_mouse_click(canvas, x, y):
     
@@ -202,6 +204,54 @@ def handle_mouse_click(canvas, x, y):
                 timingLevel[n][unit] = (timingLevel[n][unit] + 1) % NUM_LOGIC_LEVELS
                 draw_timing_unit (canvas, n, unit)
                 flip_stretch (canvas, n, unit)
+
+# -------------------------------------------
+#  draw a square wave
+#  won't be exact, due to rounding errors and
+#  size of units => periodically add a value?
+# -------------------------------------------
+def draw_clock(canvas, line, duration, minTime, maxTime):
+    # convert duration time to number of units
+    #    dur_time/line_time = dur_units/line_units
+    #    => dur_units = line_units * dur_time/line_time
+    durUnits = (UNITS_PER_LINE * duration) / (maxTime - minTime)
+    # print ("Duration: " + str(duration) + ", units: " + str(durUnits))
+    pos = 0
+    holdTime = int(durUnits/2)-1  # 1/2 of full clock cycle
+    halfcycle = False
+    if durUnits/2 - int(durUnits/2) > 0.50:
+        halfcycle = True
+        
+    # set values for a square wave clock cycle
+    while pos + holdTime < UNITS_PER_LINE:
+        timingLevel[line][pos] = RISING 
+        for y in range(holdTime):
+            timingLevel[line][pos+y+1] = HIGH_LINE
+            
+        pos = pos + holdTime + 1
+        if pos + holdTime + 1 >= UNITS_PER_LINE:
+            break
+        
+        timingLevel[line][pos] = FALLING 
+        for y in range(holdTime):
+            timingLevel[line][pos+y+1] = LOW_LINE
+        if halfcycle == True:
+            pos = pos + 1
+            timingLevel[line][pos+holdTime] = LOW_LINE
+        pos = pos + holdTime + 1
+
+    # do a partial cycle at the end
+    if pos < UNITS_PER_LINE:
+        if timingLevel[line][pos-1] == HIGH_LINE:
+            timingLevel[line][pos-1] = FALLING
+            for y in range(pos, UNITS_PER_LINE):
+                timingLevel[line][y] = LOW_LINE
+        else:
+            timingLevel[line][pos-1] = RISING
+            for y in range(pos, UNITS_PER_LINE):
+                timingLevel[line][y] = HIGH_LINE
+        
+    draw_timing_line(canvas, line)
 
 
 # -------------------------------------------
